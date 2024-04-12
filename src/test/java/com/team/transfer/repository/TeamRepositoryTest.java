@@ -1,6 +1,7 @@
 package com.team.transfer.repository;
 
 import com.team.transfer.domain.Team;
+import com.team.transfer.domain.TeamFormat;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TeamRepositoryTest {
 
     protected static final EasyRandom EASY_RANDOM = new EasyRandom();
+
     @Autowired
     TeamRepository teamRepository;
+    @Autowired
+    TeamFormatRepository teamFormatRepository;
 
     @Test
     void findAllTeams() {
-        List<Team> teamList = IntStream.range(0, 3).mapToObj(i -> getTeam()).toList();
+        TeamFormat teamFormat = getTeamFormat();
+        this.teamFormatRepository.save(teamFormat);
+        List<Team> teamList = IntStream.range(0, 3).mapToObj(i -> {
+            Team team = getTeam();
+            team.setTeamFormat(teamFormat);
+            return team;
+        }).toList();
         this.teamRepository.saveAll(teamList);
 
         List<Team> actual = this.teamRepository.findAll();
@@ -31,5 +41,11 @@ class TeamRepositoryTest {
         Team team = EASY_RANDOM.nextObject(Team.class);
         team.setId(null);
         return team;
+    }
+
+    private TeamFormat getTeamFormat() {
+        TeamFormat teamFormat = EASY_RANDOM.nextObject(TeamFormat.class);
+        teamFormat.setId(null);
+        return teamFormat;
     }
 }

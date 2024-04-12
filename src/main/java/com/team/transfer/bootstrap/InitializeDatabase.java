@@ -1,15 +1,11 @@
 package com.team.transfer.bootstrap;
 
-import com.team.transfer.domain.FormatType;
 import com.team.transfer.domain.Player;
 import com.team.transfer.domain.Team;
 import com.team.transfer.domain.TeamFormat;
 import com.team.transfer.repository.PlayerRepository;
 import com.team.transfer.repository.TeamFormatRepository;
 import com.team.transfer.repository.TeamRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.jeasy.random.EasyRandom;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -17,7 +13,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static com.team.transfer.domain.FormatType.*;
+import static com.team.transfer.domain.FormatType.ELEVEN_V_ELEVEN;
+import static com.team.transfer.domain.FormatType.NINE_V_NINE;
 
 @Component
 public class InitializeDatabase implements CommandLineRunner {
@@ -39,22 +36,23 @@ public class InitializeDatabase implements CommandLineRunner {
         TeamFormat elevenVEleven = TeamFormat.builder().formatType(ELEVEN_V_ELEVEN).minNumberOfPlayers(11).maxNumberOfPlayers(16).build();
         this.teamFormatRepository.saveAll(List.of(nineVNine, elevenVEleven));
 
-        List<Player> liverpoolPlayers = IntStream.range(0,15).mapToObj(i -> {
-            Player player = EASY_RANDOM.nextObject(Player.class);
-            player.setId(null);
-            return player;
-        }).toList();
-
-        List<Player> manUPlayers =  IntStream.range(0,14).mapToObj(i -> {
-            Player player = EASY_RANDOM.nextObject(Player.class);
-            player.setId(null);
-            return player;
-        }).toList();
+        List<Player> liverpoolPlayers = getPlayersForTeam(15);
+        List<Player> manUPlayers =  getPlayersForTeam(14);
         this.playerRepository.saveAll(liverpoolPlayers);
         this.playerRepository.saveAll(manUPlayers);
 
         Team lvp = Team.builder().name("Liverpool").teamFormat(elevenVEleven).build();
         Team manU = Team.builder().name("ManU").teamFormat(elevenVEleven).build();
         this.teamRepository.saveAll(List.of(lvp, manU));
+    }
+
+    private List<Player> getPlayersForTeam(int count) {
+        return IntStream.range(0, count).mapToObj(i -> getPlayer()).toList();
+    }
+
+    private Player getPlayer() {
+        Player player = EASY_RANDOM.nextObject(Player.class);
+        player.setId(null);
+        return player;
     }
 }
