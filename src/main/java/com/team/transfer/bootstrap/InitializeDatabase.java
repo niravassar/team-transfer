@@ -6,6 +6,7 @@ import com.team.transfer.domain.TeamFormat;
 import com.team.transfer.repository.PlayerRepository;
 import com.team.transfer.repository.TeamFormatRepository;
 import com.team.transfer.repository.TeamRepository;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.jeasy.random.EasyRandom;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -18,8 +19,6 @@ import static com.team.transfer.domain.FormatType.NINE_V_NINE;
 
 @Component
 public class InitializeDatabase implements CommandLineRunner {
-
-    private static final EasyRandom EASY_RANDOM = new EasyRandom();
 
     private final TeamRepository teamRepository;
     private final TeamFormatRepository teamFormatRepository;
@@ -41,8 +40,8 @@ public class InitializeDatabase implements CommandLineRunner {
         this.playerRepository.saveAll(liverpoolPlayers);
         this.playerRepository.saveAll(manUPlayers);
 
-        Team lvp = Team.builder().name("Liverpool").teamFormat(elevenVEleven).build();
-        Team manU = Team.builder().name("ManU").teamFormat(elevenVEleven).build();
+        Team lvp = Team.builder().name("Liverpool").teamFormat(elevenVEleven).players(liverpoolPlayers).build();
+        Team manU = Team.builder().name("ManU").teamFormat(elevenVEleven).players(manUPlayers).build();
         this.teamRepository.saveAll(List.of(lvp, manU));
     }
 
@@ -51,8 +50,6 @@ public class InitializeDatabase implements CommandLineRunner {
     }
 
     private Player getPlayer() {
-        Player player = EASY_RANDOM.nextObject(Player.class);
-        player.setId(null);
-        return player;
+        return Player.builder().name(RandomStringUtils.randomAlphabetic(5)).build();
     }
 }

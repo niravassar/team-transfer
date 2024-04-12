@@ -3,6 +3,8 @@ package com.team.transfer.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -15,4 +17,7 @@ public class Team {
     private String name;
     @ManyToOne
     private TeamFormat teamFormat;
+    @OneToMany
+    @JoinColumn(name="teamId")
+    List<Player> players;
 }
