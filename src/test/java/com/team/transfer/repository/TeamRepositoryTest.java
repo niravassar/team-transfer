@@ -10,12 +10,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static com.team.transfer.utils.DataGenerator.getTeam;
+import static com.team.transfer.utils.DataGenerator.getTeamFormat;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 class TeamRepositoryTest {
-
-    protected static final EasyRandom EASY_RANDOM = new EasyRandom();
 
     @Autowired
     TeamRepository teamRepository;
@@ -35,17 +35,5 @@ class TeamRepositoryTest {
 
         List<Team> actual = this.teamRepository.findAll();
         assertThat(actual).usingRecursiveComparison().ignoringCollectionOrder().isEqualTo(teamList);
-    }
-
-    private Team getTeam() {
-        Team team = EASY_RANDOM.nextObject(Team.class);
-        team.setId(null);
-        return team;
-    }
-
-    private TeamFormat getTeamFormat() {
-        TeamFormat teamFormat = EASY_RANDOM.nextObject(TeamFormat.class);
-        teamFormat.setId(null);
-        return teamFormat;
     }
 }

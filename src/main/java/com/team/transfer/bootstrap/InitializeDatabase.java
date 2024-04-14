@@ -7,7 +7,6 @@ import com.team.transfer.repository.PlayerRepository;
 import com.team.transfer.repository.TeamFormatRepository;
 import com.team.transfer.repository.TeamRepository;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.jeasy.random.EasyRandom;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -35,8 +34,8 @@ public class InitializeDatabase implements CommandLineRunner {
         TeamFormat elevenVEleven = TeamFormat.builder().formatType(ELEVEN_V_ELEVEN).minNumberOfPlayers(11).maxNumberOfPlayers(16).build();
         this.teamFormatRepository.saveAll(List.of(nineVNine, elevenVEleven));
 
-        List<Player> liverpoolPlayers = getPlayersForTeam(15);
-        List<Player> manUPlayers =  getPlayersForTeam(14);
+        List<Player> liverpoolPlayers = getPlayers(15);
+        List<Player> manUPlayers =  getPlayers(14);
         this.playerRepository.saveAll(liverpoolPlayers);
         this.playerRepository.saveAll(manUPlayers);
 
@@ -45,11 +44,8 @@ public class InitializeDatabase implements CommandLineRunner {
         this.teamRepository.saveAll(List.of(lvp, manU));
     }
 
-    private List<Player> getPlayersForTeam(int count) {
-        return IntStream.range(0, count).mapToObj(i -> getPlayer()).toList();
-    }
-
-    private Player getPlayer() {
-        return Player.builder().name(RandomStringUtils.randomAlphabetic(5)).build();
+    private List<Player> getPlayers(int count) {
+        Player player = Player.builder().name(RandomStringUtils.randomAlphabetic(5)).build();
+        return IntStream.range(0, count).mapToObj(i -> player).toList();
     }
 }
