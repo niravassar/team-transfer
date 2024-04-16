@@ -20,4 +20,11 @@ public class Team {
     @OneToMany
     @JoinColumn(name="teamId")
     List<Player> players;
+
+    public long getNumberOfPlayers() {
+        if (players != null) {
+            return players.size();
+        }
+        return 0;
+    }
 }
