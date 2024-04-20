@@ -1,7 +1,6 @@
 package com.team.transfer.service;
 
 import com.team.transfer.contract.TransferFormContract;
-import com.team.transfer.domain.FormatType;
 import com.team.transfer.domain.Player;
 import com.team.transfer.domain.Team;
 import com.team.transfer.domain.TeamFormat;
@@ -16,14 +15,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.IntStream;
 
 import static com.team.transfer.domain.FormatType.ELEVEN_V_ELEVEN;
-import static com.team.transfer.utils.DataGenerator.getPlayers;
+import static com.team.transfer.utils.DataGenerator.getTeam;
+import static com.team.transfer.utils.DataGenerator.getTeamFormat;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -99,21 +97,6 @@ class TeamServiceTest {
                 .build();
         return new TransferPlayerSetupObjects(lvp, manU, tradedPlayer, teamFormat, transferFormContract);
     }
-
-    private Team getTeam(int numberOfPlayers) {
-        return Team.builder()
-                .id(new Random().nextLong())
-                .teamFormat(getTeamFormat(ELEVEN_V_ELEVEN)).players(new ArrayList<>(getPlayers(numberOfPlayers))).build();
-    }
-
-    private TeamFormat getTeamFormat(FormatType formatType) {
-        return TeamFormat.builder()
-                .formatType(formatType)
-                .maxNumberOfPlayers(16)
-                .minNumberOfPlayers(11)
-                .build();
-    }
-
 
     private void setupTransferPlayerMockRepoistoryCalls(TransferPlayerSetupObjects testObject) {
         when(this.teamRepository.findById(testObject.lvp.getId())).thenReturn(Optional.of(testObject.lvp));

@@ -1,12 +1,14 @@
 package com.team.transfer.domain;
 
+import com.team.transfer.utils.DataGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static com.team.transfer.domain.FormatType.ELEVEN_V_ELEVEN;
 import static com.team.transfer.domain.FormatType.NINE_V_NINE;
-import static com.team.transfer.utils.DataGenerator.getPlayers;
+import static com.team.transfer.utils.DataGenerator.getTeam;
+import static com.team.transfer.utils.DataGenerator.getTeamFormat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -47,17 +49,5 @@ class TransferFormTest {
         TransferForm transferForm = TransferForm.builder().fromTeam(liverpool).toTeam(manU).player(liverpool.getPlayers().get(0)).teamFormat(getTeamFormat(ELEVEN_V_ELEVEN)).build();
 
         assertFalse(transferForm.isTransferValid());
-    }
-
-    private Team getTeam(int numberOfPlayers) {
-        return Team.builder().teamFormat(getTeamFormat(ELEVEN_V_ELEVEN)).players(getPlayers(numberOfPlayers)).build();
-    }
-
-    private TeamFormat getTeamFormat(FormatType formatType) {
-        return TeamFormat.builder()
-                .formatType(formatType)
-                .maxNumberOfPlayers(16)
-                .minNumberOfPlayers(11)
-                .build();
     }
 }

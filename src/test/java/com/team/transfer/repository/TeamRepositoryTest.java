@@ -1,5 +1,6 @@
 package com.team.transfer.repository;
 
+import com.team.transfer.domain.FormatType;
 import com.team.transfer.domain.Team;
 import com.team.transfer.domain.TeamFormat;
 import org.jeasy.random.EasyRandom;
@@ -24,11 +25,13 @@ class TeamRepositoryTest {
 
     @Test
     void findAllTeams() {
-        TeamFormat teamFormat = getTeamFormat();
+        TeamFormat teamFormat = getTeamFormat(FormatType.ELEVEN_V_ELEVEN);
         this.teamFormatRepository.save(teamFormat);
         List<Team> teamList = IntStream.range(0, 3).mapToObj(i -> {
-            Team team = getTeam();
+            Team team = getTeam(5);
             team.setTeamFormat(teamFormat);
+            team.setPlayers(null);
+            team.setId(null);
             return team;
         }).toList();
         this.teamRepository.saveAll(teamList);
