@@ -6,6 +6,7 @@ import com.team.transfer.domain.TeamFormat;
 import com.team.transfer.repository.PlayerRepository;
 import com.team.transfer.repository.TeamFormatRepository;
 import com.team.transfer.repository.TeamRepository;
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -17,25 +18,20 @@ import static com.team.transfer.domain.FormatType.ELEVEN_V_ELEVEN;
 import static com.team.transfer.domain.FormatType.NINE_V_NINE;
 
 @Component
+@AllArgsConstructor
 public class InitializeDatabase implements CommandLineRunner {
 
     private final TeamRepository teamRepository;
     private final TeamFormatRepository teamFormatRepository;
     private final PlayerRepository playerRepository;
 
-    public InitializeDatabase(TeamRepository teamRepository, TeamFormatRepository teamFormatRepository, PlayerRepository playerRepository) {
-        this.teamRepository = teamRepository;
-        this.teamFormatRepository = teamFormatRepository;
-        this.playerRepository = playerRepository;
-    }
-
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         TeamFormat nineVNine = TeamFormat.builder().formatType(NINE_V_NINE).minNumberOfPlayers(9).maxNumberOfPlayers(12).build();
         TeamFormat elevenVEleven = TeamFormat.builder().formatType(ELEVEN_V_ELEVEN).minNumberOfPlayers(11).maxNumberOfPlayers(16).build();
         this.teamFormatRepository.saveAll(List.of(nineVNine, elevenVEleven));
 
-        List<Player> liverpoolPlayers = getPlayers(15);
-        List<Player> manUPlayers =  getPlayers(14);
+        List<Player> liverpoolPlayers = getPlayers(13);
+        List<Player> manUPlayers =  getPlayers(13);
         this.playerRepository.saveAll(liverpoolPlayers);
         this.playerRepository.saveAll(manUPlayers);
 
@@ -45,7 +41,6 @@ public class InitializeDatabase implements CommandLineRunner {
     }
 
     private List<Player> getPlayers(int count) {
-        Player player = Player.builder().name(RandomStringUtils.randomAlphabetic(5)).build();
-        return IntStream.range(0, count).mapToObj(i -> player).toList();
+        return IntStream.range(0, count).mapToObj(i -> Player.builder().name(RandomStringUtils.randomAlphabetic(5)).build()).toList();
     }
 }
