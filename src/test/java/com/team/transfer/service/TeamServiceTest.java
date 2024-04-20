@@ -5,6 +5,7 @@ import com.team.transfer.domain.FormatType;
 import com.team.transfer.domain.Player;
 import com.team.transfer.domain.Team;
 import com.team.transfer.domain.TeamFormat;
+import com.team.transfer.exception.ValidationException;
 import com.team.transfer.repository.PlayerRepository;
 import com.team.transfer.repository.TeamFormatRepository;
 import com.team.transfer.repository.TeamRepository;
@@ -15,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -23,6 +25,7 @@ import java.util.stream.IntStream;
 import static com.team.transfer.domain.FormatType.ELEVEN_V_ELEVEN;
 import static com.team.transfer.utils.DataGenerator.getPlayers;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,6 +54,39 @@ class TeamServiceTest {
     @Test
     void transferPlayerSuccess() {
         final int originalTeamSize = 13;
+        TransferPlayerSetupObjects testObject = setUpTeamsAndPlayers(originalTeamSize);
+
+        setupTransferPlayerMockRepoistoryCalls(testObject);
+
+        this.teamService.transferPlayer(testObject.transferFormContract);
+
+        verify(this.teamRepository, times(1)).findById(testObject.lvp.getId());
+        verify(this.teamRepository, times(1)).findById(testObject.manU.getId());
+        verify(this.playerRepository, times(1)).findById(testObject.tradedPlayer.getId());
+        verify(this.teamFormatRepository, times(1)).findByFormatType(ELEVEN_V_ELEVEN);
+        assertThat(testObject.lvp.getNumberOfPlayers()).isEqualTo(originalTeamSize-1);
+        assertThat(testObject.manU.getNumberOfPlayers()).isEqualTo(originalTeamSize+1);
+        assertThat(testObject.lvp.getPlayers()).doesNotContain(testObject.tradedPlayer);
+        assertThat(testObject.manU.getPlayers()).contains(testObject.tradedPlayer);
+    }
+
+    @Test
+    void transferPlayerNotValid() {
+        TransferPlayerSetupObjects testObject = setUpTeamsAndPlayers(16);
+
+        setupTransferPlayerMockRepoistoryCalls(testObject);
+
+        assertThatThrownBy(() ->  this.teamService.transferPlayer(testObject.transferFormContract())).isInstanceOf(ValidationException.class)
+                .hasMessageContaining("not valid");
+        verify(this.teamRepository, times(1)).findById(testObject.lvp().getId());
+        verify(this.teamRepository, times(1)).findById(testObject.manU().getId());
+        verify(this.playerRepository, times(1)).findById(testObject.tradedPlayer().getId());
+        verify(this.teamFormatRepository, times(1)).findByFormatType(ELEVEN_V_ELEVEN);
+    }
+
+    private record TransferPlayerSetupObjects(Team lvp, Team manU, Player tradedPlayer, TeamFormat teamFormat, TransferFormContract transferFormContract) { }
+
+    private TransferPlayerSetupObjects setUpTeamsAndPlayers(int originalTeamSize) {
         Team lvp = getTeam(originalTeamSize);
         Team manU = getTeam(originalTeamSize);
         Player tradedPlayer = lvp.getPlayers().get(0);
@@ -61,28 +97,13 @@ class TeamServiceTest {
                 .toTeamId(manU.getId())
                 .playerId(tradedPlayer.getId())
                 .build();
-
-        when(this.teamRepository.findById(lvp.getId())).thenReturn(Optional.of(lvp));
-        when(this.teamRepository.findById(manU.getId())).thenReturn(Optional.of(manU));
-        when(this.playerRepository.findById(tradedPlayer.getId())).thenReturn(Optional.of(tradedPlayer));
-        when(this.teamFormatRepository.findAll()).thenReturn(List.of(teamFormat));
-
-        this.teamService.transferPlayer(transferFormContract);
-
-        verify(this.teamRepository, times(1)).findById(lvp.getId());
-        verify(this.teamRepository, times(1)).findById(manU.getId());
-        verify(this.playerRepository, times(1)).findById(tradedPlayer.getId());
-        verify(this.teamFormatRepository, times(1)).findById(teamFormat.getId());
-        assertThat(lvp.getNumberOfPlayers()).isEqualTo(originalTeamSize-1);
-        assertThat(manU.getNumberOfPlayers()).isEqualTo(originalTeamSize-1);
-        assertThat(lvp.getPlayers()).doesNotContain(tradedPlayer);
-        assertThat(manU.getPlayers()).contains(tradedPlayer);
+        return new TransferPlayerSetupObjects(lvp, manU, tradedPlayer, teamFormat, transferFormContract);
     }
 
     private Team getTeam(int numberOfPlayers) {
         return Team.builder()
                 .id(new Random().nextLong())
-                .teamFormat(getTeamFormat(ELEVEN_V_ELEVEN)).players(getPlayers(numberOfPlayers)).build();
+                .teamFormat(getTeamFormat(ELEVEN_V_ELEVEN)).players(new ArrayList<>(getPlayers(numberOfPlayers))).build();
     }
 
     private TeamFormat getTeamFormat(FormatType formatType) {
@@ -91,6 +112,14 @@ class TeamServiceTest {
                 .maxNumberOfPlayers(16)
                 .minNumberOfPlayers(11)
                 .build();
+    }
+
+
+    private void setupTransferPlayerMockRepoistoryCalls(TransferPlayerSetupObjects testObject) {
+        when(this.teamRepository.findById(testObject.lvp.getId())).thenReturn(Optional.of(testObject.lvp));
+        when(this.teamRepository.findById(testObject.manU.getId())).thenReturn(Optional.of(testObject.manU));
+        when(this.playerRepository.findById(testObject.tradedPlayer.getId())).thenReturn(Optional.of(testObject.tradedPlayer));
+        when(this.teamFormatRepository.findByFormatType(ELEVEN_V_ELEVEN)).thenReturn(testObject.teamFormat);
     }
 
 }

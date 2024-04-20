@@ -6,6 +6,7 @@ import com.team.transfer.domain.Team;
 import com.team.transfer.domain.TeamFormat;
 import com.team.transfer.domain.TransferForm;
 import com.team.transfer.exception.NotFoundException;
+import com.team.transfer.exception.ValidationException;
 import com.team.transfer.repository.PlayerRepository;
 import com.team.transfer.repository.TeamFormatRepository;
 import com.team.transfer.repository.TeamRepository;
@@ -30,8 +31,7 @@ public class TeamService {
         Team fromTeam = this.teamRepository.findById(transferFormContract.getFromTeamId()).orElseThrow(() -> new NotFoundException("team not found"));
         Team toTeam = this.teamRepository.findById(transferFormContract.getToTeamId()).orElseThrow(() -> new NotFoundException("team not found"));
         Player player = this.playerRepository.findById(transferFormContract.getPlayerId()).orElseThrow(() -> new NotFoundException("player not found"));
-        TeamFormat teamFormat = this.teamFormatRepository.findAll().stream()
-                .filter(tf -> tf.getFormatType().equals(transferFormContract.getFormatType())).findFirst().orElseThrow(() -> new NotFoundException("player not found"));
+        TeamFormat teamFormat = this.teamFormatRepository.findByFormatType(transferFormContract.getFormatType());
 
         TransferForm transferForm = TransferForm.builder()
                 .fromTeam(fromTeam)
@@ -41,9 +41,10 @@ public class TeamService {
                 .build();
 
         if (transferForm.isTransferValid()) {
-
+            fromTeam.getPlayers().remove(player);
+            toTeam.getPlayers().add(player);
         } else {
-
+            throw new ValidationException("transfer not valid");
         }
     }
 }

@@ -14,8 +14,7 @@ public class DataGenerator {
     private static final EasyRandom EASY_RANDOM = new EasyRandom();
 
     public static List<Player> getPlayers(int count) {
-        Player player = Player.builder().name(RandomStringUtils.randomAlphabetic(5)).build();
-        return IntStream.range(0, count).mapToObj(i -> player).toList();
+        return IntStream.range(0, count).mapToObj(i ->  Player.builder().name(RandomStringUtils.randomAlphabetic(5)).build()).toList();
     }
 
     public static Team getTeam() {
