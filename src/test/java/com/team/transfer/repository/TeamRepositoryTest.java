@@ -3,7 +3,6 @@ package com.team.transfer.repository;
 import com.team.transfer.domain.FormatType;
 import com.team.transfer.domain.Team;
 import com.team.transfer.domain.TeamFormat;
-import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
