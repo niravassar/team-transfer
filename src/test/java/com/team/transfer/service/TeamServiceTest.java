@@ -54,7 +54,7 @@ class TeamServiceTest {
         final int originalTeamSize = 13;
         TransferPlayerSetupObjects testObject = setUpTeamsAndPlayers(originalTeamSize);
 
-        setupTransferPlayerMockRepoistoryCalls(testObject);
+        setupTransferPlayerMockRepositoryCalls(testObject);
 
         this.teamService.transferPlayer(testObject.transferFormContract);
 
@@ -62,6 +62,7 @@ class TeamServiceTest {
         verify(this.teamRepository, times(1)).findById(testObject.manU.getId());
         verify(this.playerRepository, times(1)).findById(testObject.tradedPlayer.getId());
         verify(this.teamFormatRepository, times(1)).findByFormatType(ELEVEN_V_ELEVEN);
+        verify(this.teamRepository, times(1)).saveAll(List.of(testObject.lvp(), testObject.manU()));
         assertThat(testObject.lvp.getNumberOfPlayers()).isEqualTo(originalTeamSize-1);
         assertThat(testObject.manU.getNumberOfPlayers()).isEqualTo(originalTeamSize+1);
         assertThat(testObject.lvp.getPlayers()).doesNotContain(testObject.tradedPlayer);
@@ -72,7 +73,7 @@ class TeamServiceTest {
     void transferPlayerNotValid() {
         TransferPlayerSetupObjects testObject = setUpTeamsAndPlayers(16);
 
-        setupTransferPlayerMockRepoistoryCalls(testObject);
+        setupTransferPlayerMockRepositoryCalls(testObject);
 
         assertThatThrownBy(() ->  this.teamService.transferPlayer(testObject.transferFormContract())).isInstanceOf(ValidationException.class)
                 .hasMessageContaining("not valid");
@@ -98,7 +99,7 @@ class TeamServiceTest {
         return new TransferPlayerSetupObjects(lvp, manU, tradedPlayer, teamFormat, transferFormContract);
     }
 
-    private void setupTransferPlayerMockRepoistoryCalls(TransferPlayerSetupObjects testObject) {
+    private void setupTransferPlayerMockRepositoryCalls(TransferPlayerSetupObjects testObject) {
         when(this.teamRepository.findById(testObject.lvp.getId())).thenReturn(Optional.of(testObject.lvp));
         when(this.teamRepository.findById(testObject.manU.getId())).thenReturn(Optional.of(testObject.manU));
         when(this.playerRepository.findById(testObject.tradedPlayer.getId())).thenReturn(Optional.of(testObject.tradedPlayer));

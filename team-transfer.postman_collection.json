@@ -1,0 +1,26 @@
+{
+	"info": {
+		"_postman_id": "a21982f0-51fb-4cff-9d89-ac5a719407cc",
+		"name": "team-transfer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30158554"
+	},
+	"item": [
+		{
+			"name": "getAllTeams",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "transfer",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}

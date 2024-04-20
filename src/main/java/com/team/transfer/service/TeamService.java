@@ -43,6 +43,7 @@ public class TeamService {
         if (transferForm.isTransferValid()) {
             fromTeam.getPlayers().remove(player);
             toTeam.getPlayers().add(player);
+            this.teamRepository.saveAll(List.of(fromTeam, toTeam));
         } else {
             throw new ValidationException("transfer not valid");
         }
