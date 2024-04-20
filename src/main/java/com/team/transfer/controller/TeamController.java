@@ -3,11 +3,10 @@ package com.team.transfer.controller;
 import com.team.transfer.contract.TransferFormContract;
 import com.team.transfer.domain.Team;
 import com.team.transfer.service.TeamService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,7 +22,8 @@ public class TeamController {
     }
 
     @PostMapping("/team/transfer")
-    public String transfer(@RequestBody TransferFormContract transferFormContract) {
-        return "transfer occurred";
+    @ResponseStatus(HttpStatus.CREATED)
+    public void transfer(@RequestBody @Valid TransferFormContract transferFormContract) {
+        teamService.transferPlayer(transferFormContract);
     }
 }
