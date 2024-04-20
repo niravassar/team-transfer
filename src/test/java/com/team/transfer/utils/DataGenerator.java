@@ -16,16 +16,14 @@ import static com.team.transfer.domain.FormatType.ELEVEN_V_ELEVEN;
 
 public class DataGenerator {
 
-    private static final EasyRandom EASY_RANDOM = new EasyRandom();
-
-    public static List<Player> getPlayers(int count) {
-        return IntStream.range(0, count).mapToObj(i ->  Player.builder().name(RandomStringUtils.randomAlphabetic(5)).build()).toList();
-    }
-
     public static Team getTeam(int numberOfPlayers) {
         return Team.builder()
                 .id(new Random().nextLong())
                 .teamFormat(getTeamFormat(ELEVEN_V_ELEVEN)).players(new ArrayList<>(getPlayers(numberOfPlayers))).build();
+    }
+
+    public static List<Player> getPlayers(int count) {
+        return IntStream.range(0, count).mapToObj(i ->  Player.builder().name(RandomStringUtils.randomAlphabetic(5)).build()).toList();
     }
 
     public static TeamFormat getTeamFormat(FormatType formatType) {

@@ -1,9 +1,6 @@
 package com.team.transfer.domain;
 
-import com.team.transfer.utils.DataGenerator;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
 
 import static com.team.transfer.domain.FormatType.ELEVEN_V_ELEVEN;
 import static com.team.transfer.domain.FormatType.NINE_V_NINE;
