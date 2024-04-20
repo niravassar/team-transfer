@@ -11,7 +11,10 @@ import lombok.*;
 public class TransferFormContract {
     @NotNull
     private FormatType formatType;
+    @NotNull
     private Long fromTeamId;
+    @NotNull
     private Long toTeamId;
+    @NotNull
     private Long playerId;
 }
